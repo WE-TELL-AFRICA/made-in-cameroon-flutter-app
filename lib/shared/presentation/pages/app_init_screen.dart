@@ -22,7 +22,7 @@ class AppInitScreen extends StatelessWidget {
         },
         child: const Center(
           child: CupertinoActivityIndicator(
-            radius: 80,
+            radius: 60,
           ),
         ),
       ),

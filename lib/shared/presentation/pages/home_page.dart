@@ -11,6 +11,8 @@ import 'package:madeincameroon/shared/utils/appColor.dart';
 import 'package:madeincameroon/artisan/presentation/pages/artisan_page_screen.dart';
 import 'package:madeincameroon/category/presentation/pages/category_page_screen.dart';
 import 'package:madeincameroon/user/presentation/pages/profil_page_screen.dart';
+import '../../../category/logic/category_cubit.dart';
+import '../../../locator.dart';
 import '../../data/load_data.dart';
 import '../../utils/dimens.dart';
 import 'home_page_screen.dart';
@@ -31,6 +33,12 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getIt.get<CategoryCubit>().getCategories();
   }
 
   @override
