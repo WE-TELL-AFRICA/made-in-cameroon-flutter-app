@@ -12,7 +12,7 @@ class CategoryRepository {
   Future<List<CategoryModel>> getAll() async {
     List<CategoryModel> listCategories = [];
     Response response = await dio.get(
-      '$BASE_URL/categories',
+      '/categories',
     );
     dynamic list = response.data["list_categories"];
     for (dynamic category in list) {
@@ -21,9 +21,4 @@ class CategoryRepository {
     }
     return listCategories;
   }
-
-
-
-
 }
-

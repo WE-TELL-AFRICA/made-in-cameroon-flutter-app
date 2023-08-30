@@ -27,17 +27,22 @@ class _WelcomePageState extends State<WelcomePage> {
     "Trouver les meilleurs artisans made in Cameroun",
     "Alors qu’attendez vous ? \nRejoignez nous dès maintenant "
   ];
+  List<CategoryModel> listCategoriesParent = [];
 
   @override
   void initState() {
     super.initState();
-    fetchCategories();
+    //fetchCategories();
   }
 
   void fetchCategories() async {
     var list = await CategoryRepository(dio: Dio()).getAll();
-    List<CategoryModel> listCategoriesParent = list.where((value) => value.parendId == null).toList();
-    print("listCategories Parent : length ${listCategoriesParent.length}----${listCategoriesParent}");
+    setState(() {
+      listCategoriesParent =
+          list.where((value) => value.parendId == null).toList();
+      print(
+          "listCategories Parent : length ${listCategoriesParent.length}----${listCategoriesParent}");
+    });
   }
 
   @override

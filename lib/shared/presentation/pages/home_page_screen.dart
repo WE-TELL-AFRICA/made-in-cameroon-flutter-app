@@ -1,5 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:madeincameroon/category/logic/category_cubit.dart';
+import 'package:madeincameroon/category/logic/category_state.dart';
 import '../../../category/data/models/category_model.dart';
+import '../../../locator.dart';
 import '../../../product/presentation/views/gridview_product.dart';
 import '../../utils/appColor.dart';
 import '../../../product/data/model/product.dart';
@@ -110,8 +115,8 @@ class HomePageScreen extends StatelessWidget {
             ),
           ),
           Padding(
-            padding:
-                const EdgeInsets.only(left : 16.0 ,top: 16.0, bottom: 16.0, right: 8.0),
+            padding: const EdgeInsets.only(
+                left: 16.0, top: 16.0, bottom: 16.0, right: 8.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -123,22 +128,19 @@ class HomePageScreen extends StatelessWidget {
                   ),
                 ),
                 ElevatedButton(
-                  onPressed: () {
-
-                  },
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.transparent,
-                    onPrimary: Colors.grey,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20.0),
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.transparent,
+                      onPrimary: Colors.grey,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20.0),
+                      ),
                     ),
-                  ),
-                  child: const Text(
-                    "Voir plus >",
-                    style: TextStyle(color: colorPrimary, fontSize: 14.0),
-                  )
-                ),
+                    child: const Text(
+                      "Voir plus >",
+                      style: TextStyle(color: colorPrimary, fontSize: 14.0),
+                    )),
               ],
             ),
           ),
@@ -146,16 +148,58 @@ class HomePageScreen extends StatelessWidget {
             height: 85,
             child: Padding(
               padding: const EdgeInsets.only(left: 16.0),
-              child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: listCategories.length,
-                  itemBuilder: (context, index) {
-                    return CircleCategoryView(
-                        category: CategoryModel(
-                          image: listCategories[index].image,
-                            name: listCategories[index].name,
-                            id: index));
-                  }),
+              child: BlocBuilder<CategoryCubit, CategoryState>(
+                bloc: getIt.get<CategoryCubit>(),
+                builder: (context, state) {
+                  if (state.isLoadingCategory) {
+                    return CupertinoActivityIndicator();
+                  }
+                  if (state.errorLoadingCategory) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          IconButton(
+                            onPressed: () {
+                              getIt.get<CategoryCubit>().getCategories();
+                            },
+                            icon: const Icon(
+                              Icons.refresh,
+                              size: 50,
+                            ),
+                          ),
+                          const SizedBox(height: 30),
+                          Text("${state.message}"),
+                        ],
+                      ),
+                    );
+                  }
+                  if (state.categories?.isEmpty ?? true) {
+                    return Center(
+                      child: InkWell(
+                          onTap: () {
+                            getIt.get<CategoryCubit>().getCategories();
+                          },
+                          child: Text("Aucune categories")),
+                    );
+                  }
+                  if (state.categories != null) {
+                    List<CategoryModel> categories = state.categories!;
+                    List<CategoryModel> listCategoriesParent = categories
+                        .where((value) => value.parendId == null)
+                        .toList();
+                    return ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: listCategoriesParent.length,
+                        itemBuilder: (context, index) {
+                          return CircleCategoryView(
+                              category: listCategoriesParent[index]);
+                        });
+                  }
+                  return Container();
+                },
+              ),
             ),
           ),
           const Padding(

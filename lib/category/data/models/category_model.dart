@@ -1,6 +1,7 @@
+import 'package:equatable/equatable.dart';
 import 'package:madeincameroon/shared/data/Model/image_model.dart';
 
-class CategoryModel {
+class CategoryModel extends Equatable {
   CategoryModel(
       {required this.id,
       required this.name,
@@ -8,6 +9,9 @@ class CategoryModel {
       this.parendId,
       this.createdAt,
       this.updatedAt});
+
+  @override
+  List<Object> get props => [id, name];
 
   @override
   String toString() {
