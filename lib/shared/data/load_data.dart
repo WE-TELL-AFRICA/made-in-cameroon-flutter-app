@@ -40,6 +40,30 @@ List<Product> listProducts = [
     isApprove: true,
     categoryId: 1,
   ),
+  Product(
+    id: 5,
+    name: "Jus de fruits par banaloba compagny",
+    listUrlImage: [
+      "assets/images/products/jus_fruit_banaloba.jpg",
+      "assets/images/products/biscuit_naya.jpg",
+      "assets/images/products/chips.jpg"
+    ],
+    description: '',
+    isApprove: true,
+    categoryId: 1,
+  ),
+  Product(
+    id: 6,
+    name: "Jus de fruits par banaloba compagny",
+    listUrlImage: [
+      "assets/images/products/jus_fruit_banaloba.jpg",
+      "assets/images/products/biscuit_naya.jpg",
+      "assets/images/products/chips.jpg"
+    ],
+    description: '',
+    isApprove: true,
+    categoryId: 1,
+  ),
 ];
 
 List<CategoryModel> listCategories = [

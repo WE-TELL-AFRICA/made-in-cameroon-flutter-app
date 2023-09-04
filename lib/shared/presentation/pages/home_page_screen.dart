@@ -22,8 +22,6 @@ class HomePageScreen extends StatelessWidget {
   final List<CategoryModel> listCategories;
   final List<Product> listProducts;
 
-
-
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -63,9 +61,11 @@ class HomePageScreen extends StatelessWidget {
                           height: 40,
                           width: MediaQuery.of(context).size.width / 2,
                           decoration: const BoxDecoration(
-                              color: Colors.white,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(5.0))),
+                            color: Colors.white,
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(5.0),
+                            ),
+                          ),
                           child: const Padding(
                             padding: EdgeInsets.symmetric(horizontal: 8.0),
                             child: Row(
@@ -118,7 +118,7 @@ class HomePageScreen extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.only(
-                left: 16.0, top: 16.0, bottom: 16.0, right: 8.0),
+                left: 16.0, top: 8.0, right: 8.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -168,11 +168,11 @@ class HomePageScreen extends StatelessWidget {
                             },
                             icon: const Icon(
                               Icons.refresh,
-                              size: 50,
+                              size: 30,
                             ),
                           ),
                           const SizedBox(height: 30),
-                          Text("${state.message}"),
+                          //Text("${state.message}"),
                         ],
                       ),
                     );
@@ -212,6 +212,7 @@ class HomePageScreen extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: GridViewProduct(listProduct: listProducts),
           ),
+          SizedBox(height: 32.0,)
         ],
       ),
     );

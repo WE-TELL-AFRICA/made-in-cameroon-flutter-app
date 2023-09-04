@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:madeincameroon/category/presentation/pages/category_detail_screen.dart';
 
+import '../../../shared/data/settings.dart';
 import '../../../shared/utils/appColor.dart';
 import '../../data/models/category_model.dart';
 
@@ -19,7 +20,9 @@ class RectCategoryView extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => CategoryDetailScreen(),
+              builder: (context) => CategoryDetailScreen(
+                category: category,
+              ),
             ),
           );
         },
@@ -31,8 +34,8 @@ class RectCategoryView extends StatelessWidget {
                 color: colorPrimary,
                 borderRadius: BorderRadius.circular(defaultRadius),
                 image: DecorationImage(
-                    image: AssetImage(
-                      category.image!.urlImage,
+                    image: NetworkImage(
+                      "$BASE_URL$REF_IMAGE/${category.image!.urlImage}",
                     ),
                     fit: BoxFit.cover),
               ),

@@ -25,6 +25,6 @@ void setupLocator() {
   getIt.registerSingleton<CategoryCubit>(
     CategoryCubit(
       categoryRepository: getIt.get<CategoryRepository>(),
-    ),
+    )..getCategories(),
   );
 }

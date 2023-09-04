@@ -13,7 +13,8 @@ class CategoryCubit extends Cubit<CategoryState> {
       : super(
           CategoryState(),
         );
-  getCategories() async{
+
+  getCategories() async {
     emit(
       state.copyWith(
         isLoadingCategory: true,
@@ -23,7 +24,6 @@ class CategoryCubit extends Cubit<CategoryState> {
     );
 
     try {
-
       var categories = await categoryRepository.getAll();
 
       emit(
@@ -34,7 +34,6 @@ class CategoryCubit extends Cubit<CategoryState> {
           errorLoadingCategory: false,
         ),
       );
-
     } catch (e) {
       emit(
         state.copyWith(
@@ -45,6 +44,5 @@ class CategoryCubit extends Cubit<CategoryState> {
         ),
       );
     }
-
   }
 }

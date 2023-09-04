@@ -3,16 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../locator.dart';
-import '../../../shared/data/load_data.dart';
 import '../../../shared/utils/appColor.dart';
 import '../../../shared/utils/dimens.dart';
 import '../../data/models/category_model.dart';
 import '../../logic/category_cubit.dart';
+import '../../logic/category_state.dart';
 
 class BuildFilterProduct extends StatefulWidget {
-  BuildFilterProduct({super.key, this.id});
+  BuildFilterProduct({this.id});
 
   int? id;
+
   @override
   State<StatefulWidget> createState() => _BuildFilterProduct();
 }
@@ -25,16 +26,10 @@ class _BuildFilterProduct extends State<BuildFilterProduct> {
   @override
   void initState() {
     super.initState();
-   //print("listSubCategoriesShow : $listSubCategoriesShow");
-    listSubCategoriesShow = getListCategories();
-    print("listSubCategoriesShow : $listSubCategoriesShow");
+
+    getIt.get<CategoryCubit>().getCategories();
+
     refreshMenu();
-  }
-  
-  getListCategories() async {
-    var categoryCubit = getIt.get<CategoryCubit>();
-    var categories = await categoryCubit.getCategories();
-    return categories;
   }
 
   @override
@@ -75,44 +70,99 @@ class _BuildFilterProduct extends State<BuildFilterProduct> {
           Expanded(
             child: Container(
               height: 35.0,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: listCategories.length,
-                itemBuilder: (context, index) {
-                  return Container(
-                    margin: EdgeInsets.only(left: 8.0),
-                    padding: EdgeInsets.only(left: 16.0, top: 0.0, bottom: 0.0),
-                    decoration: BoxDecoration(
-                      color: colorPrimary,
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    child: Center(
-                      child: Row(
+              child: BlocBuilder<CategoryCubit, CategoryState>(
+                bloc: getIt.get<CategoryCubit>(),
+                builder: (context, state) {
+                  if (state.isLoadingCategory) {
+                    return CupertinoActivityIndicator();
+                  }
+                  if (state.errorLoadingCategory) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Text(
-                            listCategories[index].name,
-                            style:
-                                TextStyle(fontSize: 14.0, color: Colors.white),
-                          ),
                           IconButton(
-                              icon: Icon(
-                                Icons.close,
-                                color: Colors.white,
-                                size: 18.0,
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  listCategories.removeAt(index);
-                                  print(
-                                      "listCategories-length : ${listCategories.length}");
-                                  print(
-                                      "listSubCategories-length : ${listSubCategories.length}");
-                                });
-                              }),
+                            onPressed: () {
+                              getIt.get<CategoryCubit>().getCategories();
+                            },
+                            icon: const Icon(
+                              Icons.refresh,
+                              size: 30,
+                            ),
+                          ),
+                          const SizedBox(height: 30),
+                          //Text("${state.message}"),
                         ],
                       ),
-                    ),
-                  );
+                    );
+                  }
+                  if (state.categories?.isEmpty ?? true) {
+                    return Center(
+                      child: InkWell(
+                          onTap: () {
+                            getIt.get<CategoryCubit>().getCategories();
+                          },
+                          child: Text("Aucune categories")),
+                    );
+                  }
+                  if (state.categories != null) {
+                    List<CategoryModel> categories = state.categories!;
+                    List<CategoryModel> listCategoriesFilter = [];
+                    if (widget.id != null) {
+                      listCategoriesFilter = categories
+                          .where((value) => value.parendId == widget.id)
+                          .toList();
+                    } else {
+                      listCategoriesFilter = categories
+                          .where((value) => value.parendId != null)
+                          .toList();
+                    }
+                    listSubCategoriesShow = listCategoriesFilter;
+                    listSubCategories = listCategoriesFilter;
+                    return ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: listCategoriesFilter.length,
+                      itemBuilder: (context, index) {
+                        return Container(
+                          margin: EdgeInsets.only(left: 8.0),
+                          padding: EdgeInsets.only(
+                              left: 16.0, top: 0.0, bottom: 0.0),
+                          decoration: BoxDecoration(
+                            color: colorPrimary,
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          child: Center(
+                            child: Row(
+                              children: [
+                                Text(
+                                  listCategoriesFilter[index].name,
+                                  style: TextStyle(
+                                      fontSize: 14.0, color: Colors.white),
+                                ),
+                                IconButton(
+                                    icon: Icon(
+                                      Icons.close,
+                                      color: Colors.white,
+                                      size: 18.0,
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        listCategoriesFilter.removeAt(index);
+                                        print(
+                                            "listCategoriesFilter-length : ${listCategoriesFilter.length}");
+                                        print(
+                                            "listSubCategories-length : ${listSubCategories.length}");
+                                      });
+                                    }),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  }
+                  return Container();
                 },
               ),
             ),

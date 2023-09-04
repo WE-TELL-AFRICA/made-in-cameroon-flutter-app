@@ -38,7 +38,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    getIt.get<CategoryCubit>().getCategories();
+    //getIt.get<CategoryCubit>().getCategories();
   }
 
   @override

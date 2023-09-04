@@ -1,7 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
-import 'package:madeincameroon/shared/data/settings.dart';
-
 import '../models/category_model.dart';
 
 class CategoryRepository {

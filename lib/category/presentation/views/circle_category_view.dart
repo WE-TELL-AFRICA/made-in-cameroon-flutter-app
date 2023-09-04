@@ -21,18 +21,22 @@ class CircleCategoryView extends StatelessWidget {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => CategoryDetailScreen()));
+                      builder: (context) => CategoryDetailScreen(
+                            category: category,
+                          )));
             },
             child: Container(
               height: 60,
               width: 60,
               decoration: BoxDecoration(
-                  color: colorPrimary,
-                  shape: BoxShape.circle,
-                  image: DecorationImage(
-                      image: NetworkImage("$BASE_URL$REF_IMAGE/${category.image!.urlImage}",
-                      ),
-                      fit: BoxFit.cover)),
+                color: colorPrimary,
+                shape: BoxShape.circle,
+                image: DecorationImage(
+                    image: NetworkImage(
+                      "$BASE_URL$REF_IMAGE/${category.image!.urlImage}",
+                    ),
+                    fit: BoxFit.cover),
+              ),
             ),
           ),
           Padding(
