@@ -1,42 +1,34 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../../locator.dart';
-import '../../../shared/data/load_data.dart';
 import '../../../shared/utils/appColor.dart';
 import '../../../shared/utils/dimens.dart';
 import '../../data/models/category_model.dart';
-import '../../logic/category_cubit.dart';
 
 class BuildFilterProduct extends StatefulWidget {
-  BuildFilterProduct({super.key, this.id});
-
-  int? id;
+  BuildFilterProduct({super.key, required this.category});
+  CategoryModel category;
   @override
   State<StatefulWidget> createState() => _BuildFilterProduct();
 }
-
 class _BuildFilterProduct extends State<BuildFilterProduct> {
-  List<CategoryModel> listSubCategories = [];
-  List<CategoryModel> listSubCategoriesShow = [];
   Map<CategoryModel, bool> mapCategories = {};
-
+  List<CategoryModel> listTempCategories = [];
   @override
   void initState() {
     super.initState();
-   //print("listSubCategoriesShow : $listSubCategoriesShow");
-    listSubCategoriesShow = getListCategories();
-    print("listSubCategoriesShow : $listSubCategoriesShow");
-    refreshMenu();
+    for (CategoryModel categoryModel in widget.category.listSubCategories!) {
+      mapCategories[categoryModel] = true;
+    }
+    refreshFilter();
   }
-  
-  getListCategories() async {
-    var categoryCubit = getIt.get<CategoryCubit>();
-    var categories = await categoryCubit.getCategories();
-    return categories;
+  void refreshFilter() {
+    setState(() {
+      listTempCategories = mapCategories.entries
+          .where((entry) => entry.value == true)
+          .map((entry) => entry.key)
+          .toList();
+    });
   }
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -47,25 +39,25 @@ class _BuildFilterProduct extends State<BuildFilterProduct> {
             color: Colors.grey.withOpacity(0.5),
             spreadRadius: 1,
             blurRadius: 2,
-            offset: Offset(0, 1),
+            offset: const Offset(0, 1),
           ),
         ],
         color: Colors.white,
       ),
       child: Row(
         children: [
-          SizedBox(width: 10.0),
+          const SizedBox(width: 10.0),
           Container(
-            margin: EdgeInsets.only(right: 8.0),
+            margin: const EdgeInsets.only(right: 8.0),
             width: 35.0,
             height: 35.0,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               shape: BoxShape.circle,
               color: colorText,
             ),
             child: IconButton(
               onPressed: () => _showCategoryDialog(context),
-              icon: Icon(
+              icon: const Icon(
                 Icons.add,
                 color: Colors.white,
                 size: 18.0,
@@ -73,15 +65,16 @@ class _BuildFilterProduct extends State<BuildFilterProduct> {
             ),
           ),
           Expanded(
-            child: Container(
+            child: SizedBox(
               height: 35.0,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemCount: listCategories.length,
+                itemCount: listTempCategories.length,
                 itemBuilder: (context, index) {
                   return Container(
-                    margin: EdgeInsets.only(left: 8.0),
-                    padding: EdgeInsets.only(left: 16.0, top: 0.0, bottom: 0.0),
+                    margin: const EdgeInsets.only(left: 8.0),
+                    padding: const EdgeInsets.only(
+                        left: 16.0, top: 0.0, bottom: 0.0),
                     decoration: BoxDecoration(
                       color: colorPrimary,
                       borderRadius: BorderRadius.circular(8.0),
@@ -90,23 +83,21 @@ class _BuildFilterProduct extends State<BuildFilterProduct> {
                       child: Row(
                         children: [
                           Text(
-                            listCategories[index].name,
-                            style:
-                                TextStyle(fontSize: 14.0, color: Colors.white),
+                            listTempCategories[index].name,
+                            style: const TextStyle(
+                                fontSize: 14.0, color: Colors.white),
                           ),
                           IconButton(
-                              icon: Icon(
+                              icon: const Icon(
                                 Icons.close,
                                 color: Colors.white,
                                 size: 18.0,
                               ),
                               onPressed: () {
                                 setState(() {
-                                  listCategories.removeAt(index);
-                                  print(
-                                      "listCategories-length : ${listCategories.length}");
-                                  print(
-                                      "listSubCategories-length : ${listSubCategories.length}");
+                                  mapCategories[listTempCategories[index]] =
+                                      false;
+                                  listTempCategories.removeAt(index);
                                 });
                               }),
                         ],
@@ -122,25 +113,19 @@ class _BuildFilterProduct extends State<BuildFilterProduct> {
     );
   }
 
-  void initContentDialog() {
-    for (CategoryModel categoryModel in listSubCategoriesShow) {
-      mapCategories[categoryModel] = true;
-    }
-  }
-
   void _showCategoryDialog(BuildContext context) {
     showDialog(
         barrierDismissible: false,
         context: context,
         builder: (BuildContext context) {
+          //print("mapCategories[] ${mapCategories.toString()}");
           return AlertDialog(
-            title: Text(
+            title: const Text(
               'Sélectionnez une catégorie',
               style: TextStyle(
                   fontSize: defaultTextSize, fontWeight: FontWeight.w600),
             ),
             content: ContentDialog(
-              categories: listSubCategories,
               mapCategories: mapCategories,
             ),
             actions: <Widget>[
@@ -148,22 +133,26 @@ class _BuildFilterProduct extends State<BuildFilterProduct> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   TextButton(
-                    child: Text('Annuler',
-                        style: TextStyle(
-                            fontSize: defaultTextSize,
-                            fontWeight: FontWeight.w400)),
+                    child: const Text(
+                      'Annuler',
+                      style: TextStyle(
+                          fontSize: defaultTextSize,
+                          fontWeight: FontWeight.w400),
+                    ),
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
                   ),
                   TextButton(
-                    child: Text('Valider',
-                        style: TextStyle(
-                            color: colorPrimary,
-                            fontSize: defaultTextSize,
-                            fontWeight: FontWeight.w400)),
+                    child: const Text(
+                      'Valider',
+                      style: TextStyle(
+                          color: colorPrimary,
+                          fontSize: defaultTextSize,
+                          fontWeight: FontWeight.w400),
+                    ),
                     onPressed: () {
-                      refreshMenu();
+                      refreshFilter();
                       Navigator.of(context).pop();
                     },
                   ),
@@ -173,20 +162,12 @@ class _BuildFilterProduct extends State<BuildFilterProduct> {
           );
         });
   }
-
-  void refreshMenu() {
-    setState(() {});
-  }
 }
 
 class ContentDialog extends StatefulWidget {
-  ContentDialog(
-      {Key? key, required this.categories, required this.mapCategories})
-      : super(key: key);
+  ContentDialog({Key? key, required this.mapCategories}) : super(key: key);
 
-  List<CategoryModel> categories = [];
-
-  Map<CategoryModel, bool> mapCategories = {};
+  Map<CategoryModel, bool> mapCategories;
 
   @override
   State<StatefulWidget> createState() => _ContentDialog();
@@ -196,9 +177,6 @@ class _ContentDialog extends State<ContentDialog> {
   @override
   void initState() {
     super.initState();
-    for (CategoryModel categoryModel in widget.categories) {
-      widget.mapCategories[categoryModel] = true;
-    }
   }
 
   @override
@@ -208,7 +186,7 @@ class _ContentDialog extends State<ContentDialog> {
       categoryMenuList.add(CheckboxListTile(
         title: Text(
           key.name,
-          style: TextStyle(fontSize: 12.0, fontWeight: FontWeight.normal),
+          style: const TextStyle(fontSize: 12.0, fontWeight: FontWeight.normal),
         ),
         value: value,
         onChanged: (bool? value) {
@@ -222,34 +200,6 @@ class _ContentDialog extends State<ContentDialog> {
 
     return SingleChildScrollView(
       child: Column(children: categoryMenuList),
-    );
-  }
-
-  Widget _buildCategoryItem(
-      String categoryName, List<Map<String, bool>> subcategories) {
-    return ExpansionTile(
-      title: Text(categoryName,
-          style: TextStyle(
-              fontSize: defaultTextSize, fontWeight: FontWeight.w400)),
-      children: subcategories.map((subcategory) {
-        String subcategoryName = subcategory.keys.first;
-        bool isChecked = subcategory.values.first;
-
-        return CheckboxListTile(
-          title: Text(
-            subcategoryName,
-            style: TextStyle(fontSize: 12.0, fontWeight: FontWeight.normal),
-          ),
-          value: isChecked,
-          onChanged: (bool? value) {
-            setState(() {
-              subcategory[subcategoryName] = value!;
-              //print("value : $value");
-            });
-          },
-          controlAffinity: ListTileControlAffinity.leading,
-        );
-      }).toList(),
     );
   }
 }

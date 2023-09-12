@@ -13,7 +13,9 @@ class GridViewProduct extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0,),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 8.0,
+      ),
       child: GridView.builder(
           physics: const NeverScrollableScrollPhysics(),
           shrinkWrap: true,
@@ -27,14 +29,7 @@ class GridViewProduct extends StatelessWidget {
           itemCount: listProduct.length,
           itemBuilder: (context, index) {
             return ProductView(
-                product: Product(
-              listUrlImage: listProduct[index].listUrlImage,
-              name: listProduct[index].name,
-              id: listProduct[index].id,
-              description: '',
-              isApprove: true,
-              categoryId: 1,
-            ));
+                product: listProduct[index]);
           }),
     );
   }

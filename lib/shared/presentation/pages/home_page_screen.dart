@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:madeincameroon/category/logic/category_cubit.dart';
 import 'package:madeincameroon/category/logic/category_state.dart';
+import 'package:madeincameroon/product/logic/product_cubit.dart';
+import 'package:madeincameroon/product/logic/product_state.dart';
 import '../../../category/data/models/category_model.dart';
 import '../../../locator.dart';
 import '../../../product/presentation/views/gridview_product.dart';
@@ -10,17 +12,19 @@ import '../../utils/appColor.dart';
 import '../../../product/data/model/product.dart';
 import '../../../category/presentation/views/circle_category_view.dart';
 
-class HomePageScreen extends StatelessWidget {
+class HomePageScreen extends StatefulWidget {
   HomePageScreen({
     super.key,
     required this.scaffoldKey,
-    required this.listCategories,
-    required this.listProducts,
   });
 
   final GlobalKey<ScaffoldState> scaffoldKey;
-  final List<CategoryModel> listCategories;
-  final List<Product> listProducts;
+  void loadData() {}
+  @override
+  State<HomePageScreen> createState() => _HomePageScreenState();
+}
+class _HomePageScreenState extends State<HomePageScreen> {
+  List<Product> listProducts = [];
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +52,7 @@ class HomePageScreen extends StatelessWidget {
                     children: [
                       IconButton(
                           onPressed: () {
-                            scaffoldKey.currentState!.openDrawer();
+                            widget.scaffoldKey.currentState!.openDrawer();
                           },
                           icon: const Icon(
                             Icons.menu,
@@ -117,8 +121,7 @@ class HomePageScreen extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(
-                left: 16.0, top: 8.0, right: 8.0),
+            padding: const EdgeInsets.only(left: 16.0, top: 8.0, right: 8.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -206,13 +209,110 @@ class HomePageScreen extends StatelessWidget {
           ),
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-            child: Align(alignment: Alignment.topLeft, child: Text("Produits")),
+            child: Align(
+              alignment: Alignment.topLeft,
+              child: Text("Produits"),
+            ),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: GridViewProduct(listProduct: listProducts),
+            child: BlocBuilder<ProductCubit, ProductState>(
+              bloc: getIt.get<ProductCubit>(),
+              builder: (context, state) {
+                if (state is ProductLoading) {
+                  return CupertinoActivityIndicator();
+                }
+                if (state is ProductFailure) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        IconButton(
+                          onPressed: () {
+                            getIt.get<ProductCubit>().getProducts();
+                          },
+                          icon: const Icon(
+                            Icons.refresh,
+                            size: 30,
+                          ),
+                        ),
+                        const SizedBox(height: 30),
+                        //Text("${state.message}"),
+                      ],
+                    ),
+                  );
+                }
+                if (state.listProducts?.isEmpty ?? true) {
+                  return Center(
+                    child: InkWell(
+                        onTap: () {
+                          getIt.get<ProductCubit>().getProducts();
+                        },
+                        child: Text("Aucun Produits")),
+                  );
+                }
+                if (state.listProducts != null) {
+                  listProducts.addAll(state.listProducts!);
+
+                  print(
+                      "HomePageScreen **** listProducts : ${listProducts.map((e) => e.name.toString())}");
+
+                  return Column(
+                    children: [
+                      GridViewProduct(listProduct: listProducts),
+                      const SizedBox(
+                        height: 8.0,
+                      ),
+                      (state.numberNextPage != null)
+                          ? Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 8.0),
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  getIt
+                                      .get<ProductCubit>(
+                                          param1: state.numberNextPage)
+                                      .getProducts();
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  primary: Colors.grey,
+                                  elevation: 2,
+                                  padding: EdgeInsets.all(8.0),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.refresh,
+                                      color: Colors.white,
+                                    ),
+                                    SizedBox(
+                                      width: 8.0,
+                                    ),
+                                    Text(
+                                      "Voir plus",
+                                      style: TextStyle(color: Colors.white),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            )
+                          : Container(),
+                    ],
+                  );
+                }
+                return Container();
+              },
+            ),
           ),
-          SizedBox(height: 32.0,)
+          const SizedBox(
+            height: 32.0,
+          ),
         ],
       ),
     );

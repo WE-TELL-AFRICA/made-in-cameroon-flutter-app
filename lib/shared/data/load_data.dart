@@ -15,6 +15,7 @@ List<Product> listProducts = [
     description: '',
     isApprove: true,
     categoryId: 1,
+    information: '',
   ),
   Product(
     id: 2,
@@ -23,6 +24,7 @@ List<Product> listProducts = [
     description: '',
     isApprove: true,
     categoryId: 1,
+    information: '',
   ),
   Product(
     id: 3,
@@ -31,6 +33,7 @@ List<Product> listProducts = [
     description: '',
     isApprove: true,
     categoryId: 1,
+    information: '',
   ),
   Product(
     id: 4,
@@ -39,6 +42,7 @@ List<Product> listProducts = [
     description: '',
     isApprove: true,
     categoryId: 1,
+    information: '',
   ),
   Product(
     id: 5,
@@ -51,6 +55,7 @@ List<Product> listProducts = [
     description: '',
     isApprove: true,
     categoryId: 1,
+    information: '',
   ),
   Product(
     id: 6,
@@ -63,6 +68,7 @@ List<Product> listProducts = [
     description: '',
     isApprove: true,
     categoryId: 1,
+    information: '',
   ),
 ];
 

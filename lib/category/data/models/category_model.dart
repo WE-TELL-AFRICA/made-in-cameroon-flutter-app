@@ -2,27 +2,29 @@ import 'package:equatable/equatable.dart';
 import 'package:madeincameroon/shared/data/Model/image_model.dart';
 
 class CategoryModel extends Equatable {
-  final int id;
-  final int? parendId;
-  final String name;
-  final ImageModel? image;
-  final DateTime? createdAt;
-  final DateTime? updatedAt;
+  int id;
+  int? parendId;
+  String name;
+  ImageModel? image;
+  DateTime? createdAt;
+  DateTime? updatedAt;
+  List<CategoryModel>? listSubCategories;
 
-  const CategoryModel(
+  CategoryModel(
       {required this.id,
       required this.name,
       this.image,
       this.parendId,
       this.createdAt,
-      this.updatedAt});
+      this.updatedAt,
+      this.listSubCategories});
 
   @override
   List<Object> get props => [id, name];
 
   @override
   String toString() {
-    return 'CategoryModel{id: $id, parendId: $parendId, name: $name, image: $image, createdAt: $createdAt, updatedAt: $updatedAt}';
+    return 'CategoryModel{id: $id, parendId: $parendId, name: $name, image: $image, createdAt: $createdAt, updatedAt: $updatedAt, listSubCategories: $listSubCategories}';
   }
 
   factory CategoryModel.fromJson(Map<String, dynamic> json) {

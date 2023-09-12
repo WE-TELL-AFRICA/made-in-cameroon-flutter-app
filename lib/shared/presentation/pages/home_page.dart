@@ -13,6 +13,7 @@ import 'package:madeincameroon/category/presentation/pages/category_page_screen.
 import 'package:madeincameroon/user/presentation/pages/profil_page_screen.dart';
 import '../../../category/logic/category_cubit.dart';
 import '../../../locator.dart';
+import '../../../product/logic/product_cubit.dart';
 import '../../data/load_data.dart';
 import '../../utils/dimens.dart';
 import 'home_page_screen.dart';
@@ -25,8 +26,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 0;
 
+  int _selectedIndex = 0;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   void _onItemTapped(int index) {
@@ -39,15 +40,14 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     //getIt.get<CategoryCubit>().getCategories();
+    getIt.get<ProductCubit>().getProducts();
   }
 
   @override
   Widget build(BuildContext context) {
     final List<Widget> _children = [
       HomePageScreen(
-          scaffoldKey: _scaffoldKey,
-          listCategories: listCategories,
-          listProducts: listProducts),
+          scaffoldKey: _scaffoldKey,),
       ArtisanPageScreen(
         scaffoldKey: _scaffoldKey,
       ),

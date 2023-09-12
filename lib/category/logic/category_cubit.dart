@@ -1,10 +1,7 @@
 import 'package:bloc/bloc.dart';
-import 'package:dio/dio.dart';
 import 'package:madeincameroon/category/logic/category_state.dart';
-
-import '../../locator.dart';
 import '../../shared/utils/Utils.dart';
-import '../data/repositories/category_repository.dart';
+import '../data/repository/category_repository.dart';
 
 class CategoryCubit extends Cubit<CategoryState> {
   final CategoryRepository categoryRepository;

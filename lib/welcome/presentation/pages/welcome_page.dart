@@ -2,11 +2,15 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:madeincameroon/authentification/presentation/pages/connexion_page.dart';
 import 'package:madeincameroon/category/data/models/category_model.dart';
-import 'package:madeincameroon/category/data/repositories/category_repository.dart';
+import 'package:madeincameroon/product/data/repository/product_repository.dart';
 import 'package:madeincameroon/shared/utils/appColor.dart';
 import 'package:madeincameroon/shared/presentation/pages/home_page.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+
+import '../../../category/data/repository/category_repository.dart';
+import '../../../locator.dart';
 
 class WelcomePage extends StatefulWidget {
   const WelcomePage({super.key});
@@ -27,21 +31,26 @@ class _WelcomePageState extends State<WelcomePage> {
     "Trouver les meilleurs artisans made in Cameroun",
     "Alors qu’attendez vous ? \nRejoignez nous dès maintenant "
   ];
-  List<CategoryModel> listCategoriesParent = [];
+
+  //List<CategoryModel> listProducts = [];
 
   @override
   void initState() {
     super.initState();
-    //fetchCategories();
+    fetchProducts();
   }
 
-  void fetchCategories() async {
-    var list = await CategoryRepository(dio: Dio()).getAll();
+  void fetchProducts() async {
+    var list;
+    var number;
+    await ProductRepository(dio: getIt.get<Dio>())
+        .getPaginateProduct()
+        .then((response) {
+      list = response.productList;
+      number = response.numberNextPage;
+    });
     setState(() {
-      listCategoriesParent =
-          list.where((value) => value.parendId == null).toList();
-      print(
-          "listCategories Parent : length ${listCategoriesParent.length}----${listCategoriesParent}");
+      print("listProducts nextPage ${number}----${number}");
     });
   }
 
@@ -99,7 +108,7 @@ class _WelcomePageState extends State<WelcomePage> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const HomePage()));
+                                builder: (context) => ConnexionPage()));
                       },
                       style: ElevatedButton.styleFrom(
                         primary: colorPrimary,

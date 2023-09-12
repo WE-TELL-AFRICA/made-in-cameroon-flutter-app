@@ -1,6 +1,4 @@
 // ignore_for_file: must_be_immutable
-
-import 'package:flutter/cupertino.dart';
 import 'package:madeincameroon/category/data/models/category_model.dart';
 
 class CategoryState {

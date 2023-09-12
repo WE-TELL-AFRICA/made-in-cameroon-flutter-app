@@ -112,9 +112,6 @@ class CategoryPageScreen extends StatelessWidget {
               }
               if (state.categories != null) {
                 List<CategoryModel> categories = state.categories!;
-                List<CategoryModel> listCategoriesParent = categories
-                    .where((value) => value.parendId == null)
-                    .toList();
                 return GridView.builder(
                     physics: const NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
@@ -126,10 +123,10 @@ class CategoryPageScreen extends StatelessWidget {
                       crossAxisSpacing: 10.0,
                     ),
                     scrollDirection: Axis.vertical,
-                    itemCount: listCategoriesParent.length,
+                    itemCount: categories.length,
                     itemBuilder: (context, index) {
                       return RectCategoryView(
-                          category: listCategoriesParent[index]);
+                          category: categories[index]);
                     });
               }
               return Container();

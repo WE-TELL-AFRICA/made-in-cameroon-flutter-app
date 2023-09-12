@@ -2,12 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:madeincameroon/category/data/models/category_model.dart';
 import 'package:madeincameroon/shared/presentation/views/elevated_button_back.dart';
-import 'package:madeincameroon/shared/presentation/views/icon_button_back.dart';
 import 'package:madeincameroon/category/presentation/views/build_filter_product.dart';
-
-import '../../../product/data/model/product.dart';
 import '../../../product/presentation/views/gridview_product.dart';
-import '../../../product/presentation/views/product_view.dart';
 import '../../../shared/data/load_data.dart';
 import '../../../shared/data/settings.dart';
 
@@ -22,11 +18,29 @@ class CategoryDetailScreen extends StatefulWidget {
 
 class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+      ),
+    );
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.dark,
-    ));
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+      ),
+    );
     return Scaffold(
       body: Column(
         children: [
@@ -57,7 +71,7 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
             ],
           ),
           BuildFilterProduct(
-            id: widget.category.id,
+            category: widget.category,
           ),
           Expanded(
             child: ListView(

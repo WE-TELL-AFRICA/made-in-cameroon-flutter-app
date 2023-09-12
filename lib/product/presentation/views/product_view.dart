@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:madeincameroon/product/data/model/product.dart';
 import 'package:madeincameroon/product/presentation/pages/detail_product_screen.dart';
 
+import '../../../shared/data/settings.dart';
 import '../../../shared/utils/appColor.dart';
 
 class ProductView extends StatelessWidget {
@@ -53,8 +54,8 @@ class ProductView extends StatelessWidget {
                   },
                   child: Hero(
                     tag: product.id,
-                    child: Image.asset(
-                      product.listUrlImage[0],
+                    child: Image.network(
+                      "$BASE_URL$REF_IMAGE/${product.listUrlImage[0]}",
                       fit: BoxFit.fill,
                     ),
                   ),
