@@ -3,9 +3,8 @@ import 'package:get_it/get_it.dart';
 import 'package:madeincameroon/category/logic/category_cubit.dart';
 import 'package:madeincameroon/product/data/repository/product_repository.dart';
 import 'package:madeincameroon/product/logic/product_cubit.dart';
-import 'package:madeincameroon/shared/data/settings.dart';
+import 'package:madeincameroon/settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'category/data/repository/category_repository.dart';
 
 final getIt = GetIt.instance;
@@ -30,32 +29,12 @@ void setupLocator() {
       categoryRepository: getIt.get<CategoryRepository>(),
     )..getCategories(),
   );
-
   getIt.registerSingleton<ProductRepository>(
     ProductRepository(
       dio: getIt.get<Dio>(),
     ),
   );
-
-  getIt.registerFactoryParam<ProductCubit, int?, dynamic>((numberNextPage, _) =>
-  ProductCubit(
-      productRepository: getIt<ProductRepository>(), numberNextPage: numberNextPage)
-    ..getProducts());
-
-  /*
   getIt.registerSingleton<ProductCubit>(
-    ProductCubit(
-      productRepository: getIt.get<ProductRepository>(),
-    )..getProducts(),
-  );
-
-   */
-
-
-
-
-
-
-
-
+      ProductCubit(productRepository: getIt<ProductRepository>())
+        ..getProducts(index: 1));
 }

@@ -1,4 +1,6 @@
-class Product {
+import 'package:equatable/equatable.dart';
+
+class Product extends Equatable{
   Product(
       {required this.id,
       required this.name,
@@ -42,6 +44,9 @@ class Product {
       listUrlImage: List<String>.from(json['images'].map((image) => image["url_image"] as String).toList()),
     );
   }
+
+  @override
+  List<Object?> get props =>  [id, name];
 }
 
 /**

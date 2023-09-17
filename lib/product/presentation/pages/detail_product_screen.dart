@@ -1,6 +1,8 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:expandable_text/expandable_text.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:madeincameroon/shared/presentation/views/icon_button_back.dart';
 import 'package:madeincameroon/comments/data/models/Comment.dart';
@@ -11,7 +13,10 @@ import 'package:madeincameroon/shared/utils/appColor.dart';
 import 'package:madeincameroon/shared/utils/dimens.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import '../../../comments/presentation/views/comment_view.dart';
+import '../../../locator.dart';
 import '../../../shared/data/load_data.dart';
+import '../../logic/product_cubit.dart';
+import '../../logic/product_state.dart';
 import '../views/app_text_field.dart';
 
 class DetailProductScreen extends StatefulWidget {
@@ -29,7 +34,6 @@ class _DetailProductScreenState extends State<DetailProductScreen> {
   @override
   void initState() {
     super.initState();
-    print("print Product detailScreen : ${widget.product.toString()}");
   }
 
   @override
@@ -48,11 +52,12 @@ class _DetailProductScreenState extends State<DetailProductScreen> {
                       Column(
                         children: [
                           Align(
-                              alignment: Alignment.topLeft,
-                              child: IconButtonBack(
-                                color: colorText,
-                                sizeIcon: 32.0,
-                              ),),
+                            alignment: Alignment.topLeft,
+                            child: IconButtonBack(
+                              color: colorText,
+                              sizeIcon: 32.0,
+                            ),
+                          ),
                           Hero(
                             tag: widget.product.id,
                             child: CarouselSlider.builder(
@@ -74,7 +79,8 @@ class _DetailProductScreenState extends State<DetailProductScreen> {
                                   autoPlay: true,
                                   enlargeCenterPage: true,
                                   viewportFraction: 0.7,
-                                  autoPlayAnimationDuration: Duration(seconds: 2),
+                                  autoPlayAnimationDuration:
+                                      Duration(seconds: 2),
                                   onPageChanged: (index, reason) {
                                     setState(() {
                                       activeIndex = index;
@@ -127,7 +133,7 @@ class _DetailProductScreenState extends State<DetailProductScreen> {
                                 height: 5.0,
                               ),
                               ExpandableText(
-                                "Description ... Description, Description,Description, Description, Description, Description, Description, Description, Description ",
+                                "${widget.product.description}",
                                 textAlign: TextAlign.left,
                                 maxLines: 3,
                                 style: TextStyle(
@@ -142,11 +148,11 @@ class _DetailProductScreenState extends State<DetailProductScreen> {
                               SizedBox(
                                 height: 8.0,
                               ),
+                              /*
                               TextTitlePrimary(title: "Contacter"),
                               SizedBox(
                                 height: 5.0,
                               ),
-                              /*
                               Row(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisAlignment:
@@ -217,7 +223,7 @@ class _DetailProductScreenState extends State<DetailProductScreen> {
                               TextTitlePrimary(
                                   title: "Information complémentaires"),
                               Text(
-                                "Entreprise : Maya Bio Entreprise",
+                                "${widget.product.information}",
                                 style: TextStyle(
                                     color: colorText,
                                     fontSize: defaultTextSize,
@@ -269,11 +275,123 @@ class _DetailProductScreenState extends State<DetailProductScreen> {
                               SizedBox(
                                 height: 16.0,
                               ),
-                              TextTitlePrimary(title: "Articles similaires"),
                               SizedBox(
                                 height: 16.0,
                               ),
-                              GridViewProduct(listProduct: listProducts),
+                              BlocBuilder<ProductCubit, ProductState>(
+                                bloc: getIt.get<ProductCubit>(),
+                                buildWhen: (previousState, currentState) {
+                                  return previousState.listProducts?.length !=
+                                      currentState.listProducts?.length;
+                                },
+                                builder: (context, state) {
+                                  if (state is ProductLoading) {
+                                    return CupertinoActivityIndicator();
+                                  }
+                                  if (state is ProductFailure) {
+                                    return Center(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          IconButton(
+                                            onPressed: () {
+                                              getIt
+                                                  .get<ProductCubit>()
+                                                  .getProducts(index: 1);
+                                            },
+                                            icon: const Icon(
+                                              Icons.refresh,
+                                              size: 30,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 30),
+                                          //Text("${state.message}"),
+                                        ],
+                                      ),
+                                    );
+                                  }
+                                  if (state is ProductSuccess) {
+                                    print("load product success");
+                                    if (state.listProducts != null) {
+                                      print(
+                                          "state.listProducts : ${state.listProducts!.map((e) => e.name)}");
+                                      return Column(
+                                        children: [
+                                          TextTitlePrimary(
+                                              title: "Articles similaires"),
+                                          GridViewProduct(
+                                              listProduct: state.listProducts!),
+                                          const SizedBox(
+                                            height: 8.0,
+                                          ),
+                                          (state.numberNextPage != null)
+                                              ? Padding(
+                                                  padding: const EdgeInsets
+                                                          .symmetric(
+                                                      horizontal: 8.0),
+                                                  child: ElevatedButton(
+                                                    onPressed: () {
+                                                      print(
+                                                          "++++++number for next page : ${state.numberNextPage}");
+                                                      getIt
+                                                          .get<ProductCubit>()
+                                                          .getProducts(
+                                                              index: state
+                                                                  .numberNextPage!);
+
+                                                      print(
+                                                          "------number for next page : ${state.numberNextPage}");
+                                                    },
+                                                    style: ElevatedButton
+                                                        .styleFrom(
+                                                      primary: Colors.grey,
+                                                      elevation: 2,
+                                                      padding:
+                                                          EdgeInsets.all(8.0),
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8),
+                                                      ),
+                                                    ),
+                                                    child: const Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        Icon(
+                                                          Icons.refresh,
+                                                          color: Colors.white,
+                                                        ),
+                                                        SizedBox(
+                                                          width: 8.0,
+                                                        ),
+                                                        Text(
+                                                          "Voir plus",
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.white),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                )
+                                              : Container(),
+                                        ],
+                                      );
+                                    }
+                                  }
+
+                                  return Container();
+                                },
+                              ),
                               SizedBox(
                                 height: 64.0,
                               ),

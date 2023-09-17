@@ -5,11 +5,11 @@ import 'package:madeincameroon/category/logic/category_cubit.dart';
 import 'package:madeincameroon/category/logic/category_state.dart';
 import 'package:madeincameroon/product/logic/product_cubit.dart';
 import 'package:madeincameroon/product/logic/product_state.dart';
+import 'package:madeincameroon/product/presentation/views/gridview_product.dart';
 import '../../../category/data/models/category_model.dart';
 import '../../../locator.dart';
-import '../../../product/presentation/views/gridview_product.dart';
+import '../../../product/presentation/views/product_view.dart';
 import '../../utils/appColor.dart';
-import '../../../product/data/model/product.dart';
 import '../../../category/presentation/views/circle_category_view.dart';
 
 class HomePageScreen extends StatefulWidget {
@@ -19,13 +19,15 @@ class HomePageScreen extends StatefulWidget {
   });
 
   final GlobalKey<ScaffoldState> scaffoldKey;
-  void loadData() {}
   @override
   State<HomePageScreen> createState() => _HomePageScreenState();
 }
 class _HomePageScreenState extends State<HomePageScreen> {
-  List<Product> listProducts = [];
 
+  @override
+  void initState() {
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -207,17 +209,14 @@ class _HomePageScreenState extends State<HomePageScreen> {
               ),
             ),
           ),
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-            child: Align(
-              alignment: Alignment.topLeft,
-              child: Text("Produits"),
-            ),
-          ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: BlocBuilder<ProductCubit, ProductState>(
               bloc: getIt.get<ProductCubit>(),
+              buildWhen: (previousState, currentState) {
+                return previousState.listProducts?.length !=
+                    currentState.listProducts?.length;
+              },
               builder: (context, state) {
                 if (state is ProductLoading) {
                   return CupertinoActivityIndicator();
@@ -230,7 +229,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
                       children: [
                         IconButton(
                           onPressed: () {
-                            getIt.get<ProductCubit>().getProducts();
+                            getIt.get<ProductCubit>().getProducts(index: 1);
                           },
                           icon: const Icon(
                             Icons.refresh,
@@ -243,69 +242,69 @@ class _HomePageScreenState extends State<HomePageScreen> {
                     ),
                   );
                 }
-                if (state.listProducts?.isEmpty ?? true) {
-                  return Center(
-                    child: InkWell(
-                        onTap: () {
-                          getIt.get<ProductCubit>().getProducts();
-                        },
-                        child: Text("Aucun Produits")),
-                  );
-                }
-                if (state.listProducts != null) {
-                  listProducts.addAll(state.listProducts!);
+                if (state is ProductSuccess){
+                  print("load product success");
+                  if (state.listProducts != null) {
+                    print("state.listProducts : ${state.listProducts!.map((e) =>e.name)}");
+                    return Column(
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                          child: Align(
+                            alignment: Alignment.topLeft,
+                            child: Text("Produits"),
+                          ),
+                        ),
+                        GridViewProduct(listProduct: state.listProducts!),
+                        const SizedBox(
+                          height: 8.0,
+                        ),
+                        (state.numberNextPage != null)
+                            ? Padding(
+                          padding:
+                          const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              print("++++++number for next page : ${state.numberNextPage}");
+                              getIt
+                                  .get<ProductCubit>()
+                                  .getProducts(index: state.numberNextPage!);
 
-                  print(
-                      "HomePageScreen **** listProducts : ${listProducts.map((e) => e.name.toString())}");
-
-                  return Column(
-                    children: [
-                      GridViewProduct(listProduct: listProducts),
-                      const SizedBox(
-                        height: 8.0,
-                      ),
-                      (state.numberNextPage != null)
-                          ? Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8.0),
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  getIt
-                                      .get<ProductCubit>(
-                                          param1: state.numberNextPage)
-                                      .getProducts();
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  primary: Colors.grey,
-                                  elevation: 2,
-                                  padding: EdgeInsets.all(8.0),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.refresh,
-                                      color: Colors.white,
-                                    ),
-                                    SizedBox(
-                                      width: 8.0,
-                                    ),
-                                    Text(
-                                      "Voir plus",
-                                      style: TextStyle(color: Colors.white),
-                                    )
-                                  ],
-                                ),
+                              print("------number for next page : ${state.numberNextPage}");
+                            },
+                            style: ElevatedButton.styleFrom(
+                              primary: Colors.grey,
+                              elevation: 2,
+                              padding: EdgeInsets.all(8.0),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
                               ),
-                            )
-                          : Container(),
-                    ],
-                  );
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.refresh,
+                                  color: Colors.white,
+                                ),
+                                SizedBox(
+                                  width: 8.0,
+                                ),
+                                Text(
+                                  "Voir plus",
+                                  style: TextStyle(color: Colors.white),
+                                )
+                              ],
+                            ),
+                          ),
+                        )
+                            : Container(),
+                      ],
+                    );
+                  }
                 }
+
                 return Container();
               },
             ),

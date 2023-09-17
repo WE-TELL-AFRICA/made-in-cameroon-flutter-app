@@ -5,7 +5,7 @@ import 'package:madeincameroon/shared/presentation/views/elevated_button_back.da
 import 'package:madeincameroon/category/presentation/views/build_filter_product.dart';
 import '../../../product/presentation/views/gridview_product.dart';
 import '../../../shared/data/load_data.dart';
-import '../../../shared/data/settings.dart';
+import '../../../settings.dart';
 
 class CategoryDetailScreen extends StatefulWidget {
   CategoryDetailScreen({super.key, required this.category});

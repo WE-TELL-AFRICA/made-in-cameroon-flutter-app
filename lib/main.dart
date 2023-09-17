@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:madeincameroon/category/logic/category_cubit.dart';
+import 'package:madeincameroon/product/logic/product_cubit.dart';
 import 'package:madeincameroon/welcome/presentation/pages/welcome_page.dart';
 
 import 'locator.dart';
@@ -19,6 +20,9 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider<CategoryCubit>(
           create: (context) => getIt.get<CategoryCubit>()..getCategories(),
+        ),
+        BlocProvider<ProductCubit>(
+          create: (context) => getIt.get<ProductCubit>()..getProducts(index: 1),
         ),
       ],
       child: MaterialApp(

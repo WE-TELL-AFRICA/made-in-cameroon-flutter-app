@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:madeincameroon/product/data/model/product.dart';
 import 'package:madeincameroon/product/presentation/pages/detail_product_screen.dart';
 
-import '../../../shared/data/settings.dart';
+import '../../../settings.dart';
 import '../../../shared/utils/appColor.dart';
 
 class ProductView extends StatelessWidget {

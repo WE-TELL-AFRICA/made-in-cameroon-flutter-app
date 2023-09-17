@@ -14,7 +14,6 @@ import 'package:madeincameroon/user/presentation/pages/profil_page_screen.dart';
 import '../../../category/logic/category_cubit.dart';
 import '../../../locator.dart';
 import '../../../product/logic/product_cubit.dart';
-import '../../data/load_data.dart';
 import '../../utils/dimens.dart';
 import 'home_page_screen.dart';
 
@@ -40,7 +39,6 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     //getIt.get<CategoryCubit>().getCategories();
-    getIt.get<ProductCubit>().getProducts();
   }
 
   @override

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:madeincameroon/product/data/model/product.dart';
 
@@ -6,12 +8,12 @@ class ProductRepository {
 
   ProductRepository({required this.dio});
 
-  Future<CustomResponseData> getPaginateProduct({int? numberNextPage}) async {
+  Future<CustomResponseData> getPaginateProduct(
+      {required int numberNextPage}) async {
     List<Product> listProducts = [];
     var getPage = "";
-    if (numberNextPage != null) {
-      getPage = "?page=$numberNextPage";
-    }
+    getPage = "?page=$numberNextPage";
+
     Response response = await dio.get(
       '/products$getPage',
     );
@@ -25,8 +27,25 @@ class ProductRepository {
       final productValue = Product.fromJson(product);
       listProducts.add(productValue);
     }
-    print("listProducts : ${listProducts.map((e) => e.name.toString())}");
     return CustomResponseData(listProducts, nextPageNumber);
+  }
+
+  Future<void> addProduct({
+    required String name,
+    required String description,
+    required int categoryId,
+    required bool isApprove,
+    required String information,
+    required File fileImage,
+  }) async {
+    Response response = await dio.post('/products', data: {
+      'name': name,
+      'description': description,
+      'category_id': categoryId,
+      'is_approve': isApprove,
+      'information': information,
+      'image[]': fileImage,
+    });
   }
 }
 

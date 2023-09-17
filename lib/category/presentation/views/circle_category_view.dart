@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:madeincameroon/category/presentation/pages/category_detail_screen.dart';
 
-import '../../../shared/data/settings.dart';
+import '../../../settings.dart';
 import '../../../shared/utils/appColor.dart';
 import '../../data/models/category_model.dart';
 

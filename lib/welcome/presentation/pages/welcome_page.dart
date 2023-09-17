@@ -37,22 +37,9 @@ class _WelcomePageState extends State<WelcomePage> {
   @override
   void initState() {
     super.initState();
-    fetchProducts();
   }
 
-  void fetchProducts() async {
-    var list;
-    var number;
-    await ProductRepository(dio: getIt.get<Dio>())
-        .getPaginateProduct()
-        .then((response) {
-      list = response.productList;
-      number = response.numberNextPage;
-    });
-    setState(() {
-      print("listProducts nextPage ${number}----${number}");
-    });
-  }
+
 
   @override
   Widget build(BuildContext context) {
